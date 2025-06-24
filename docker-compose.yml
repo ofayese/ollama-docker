@@ -6,6 +6,8 @@ services:
       - 5678:5678
     volumes:
       - .:/code
+      # Synology NAS volume mapping
+      - /volume1/docker/ollama/logs:/code/logs
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
     restart: always
     depends_on:
@@ -20,8 +22,12 @@ services:
       - 7869:11434
     volumes:
       - .:/code
+      # Original volume mapping
       - ./ollama/ollama:/root/.ollama
-    container_name: ollama
+      # Synology NAS volume mapping
+      - /volume1/docker/ollama/ollama:/root/.ollama
+      - /volume1/docker/ollama/logs/ollama:/var/log/ollama
+    container_name:  ollama
     pull_policy: always
     tty: true
     restart: always
@@ -35,7 +41,11 @@ services:
     image: ghcr.io/open-webui/open-webui:main
     container_name: ollama-webui
     volumes:
+      # Original volume mapping
       - ./ollama/ollama-webui:/app/backend/data
+      # Synology NAS volume mapping
+      - /volume1/docker/ollama/ollama-webui:/app/backend/data
+      - /volume1/docker/ollama/logs/webui:/app/backend/logs
     depends_on:
       - ollama
     ports:
