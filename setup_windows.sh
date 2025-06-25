@@ -1,9 +1,12 @@
-#!/bin/bash
-
 # run using docker
 docker build -t valiantlynx/ollama-docker .
 #start ollama nd ollama webui then:
 docker run --name ollama-docker-container -d -p 8000:8000 -v "$(pwd):/code" valiantlynx/ollama-docker:latest
+
+#connect to turborepo
+git subtree add --prefix=apps/ollama-docker https://github.com/valiantlynx/ollama-docker.git main --squash
+git subtree pull --prefix=apps/ollama-docker https://github.com/valiantlynx/ollama-docker.git main --squash
+git subtree push --prefix=apps/ollama-docker https://github.com/valiantlynx/ollama-docker.git main
 
 # Synology NAS deployment functions
 deploy_to_synology() {
@@ -47,6 +50,7 @@ start_synology_containers() {
         echo "Containers started locally on NAS!"
     else
         echo "Starting containers on remote NAS..."
+        # Build and start containers on NAS
         ssh root@10.0.1.15 "cd /volume1/docker/ollama && docker-compose up -d"
         echo "Containers started on Synology NAS!"
     fi
@@ -72,6 +76,7 @@ stop_synology_containers() {
     fi
 }
 
+# Usage instructions
 show_synology_usage() {
     echo "Synology NAS Deployment Commands:"
     echo "  deploy_to_synology     - Deploy files to NAS"
@@ -81,4 +86,10 @@ show_synology_usage() {
     echo "Manual deployment:"
     echo "  1. Run: deploy_to_synology"
     echo "  2. Run: start_synology_containers"
+    echo ""
+    echo "Note: Ensure SSH key authentication is set up for root@10.0.1.15"
 }
+
+# Uncomment the lines below to run deployment automatically
+# deploy_to_synology
+# start_synology_containers

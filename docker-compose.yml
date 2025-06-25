@@ -2,13 +2,13 @@ services:
   app:
     build: .
     ports:
-      - 8000:8000
+      - 8010:8010
       - 5678:5678
     volumes:
       - .:/code
       # Synology NAS volume mapping
       - /volume1/docker/ollama/logs:/code/logs
-    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8010 --reload
     restart: always
     depends_on:
       - ollama
@@ -23,9 +23,9 @@ services:
     volumes:
       - .:/code
       # Original volume mapping
-      - ./ollama/ollama:/root/.ollama
+      - ./ollama:/root/.ollama
       # Synology NAS volume mapping
-      - /volume1/docker/ollama/ollama:/root/.ollama
+      - /volume1/docker/ollama:/root/.ollama
       - /volume1/docker/ollama/logs/ollama:/var/log/ollama
     container_name:  ollama
     pull_policy: always
@@ -42,7 +42,7 @@ services:
     container_name: ollama-webui
     volumes:
       # Original volume mapping
-      - ./ollama/ollama-webui:/app/backend/data
+      - ./ollama-webui:/app/backend/data
       # Synology NAS volume mapping
       - /volume1/docker/ollama/ollama-webui:/app/backend/data
       - /volume1/docker/ollama/logs/webui:/app/backend/logs
@@ -55,7 +55,7 @@ services:
       - ENV=dev
       - WEBUI_AUTH=False
       - WEBUI_NAME=valiantlynx AI
-      - WEBUI_URL=http://localhost:8080
+      - WEBUI_URL=http://10.0.1.15:8010
       - WEBUI_SECRET_KEY=t0p-s3cr3t
     extra_hosts:
       - host.docker.internal:host-gateway
